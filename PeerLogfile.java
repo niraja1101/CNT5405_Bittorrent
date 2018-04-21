@@ -173,7 +173,7 @@ import java.sql.Timestamp;
                 e.printStackTrace();
             }
         }
-        public void notInterestedMsgType(int peer_id1, int peer_id2)
+        public void receivednotinterestedmsg(int peer_id1, int peer_id2)
         {
             String fName= haslogfile(peer_id1);
             try
