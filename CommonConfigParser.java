@@ -6,12 +6,12 @@ import java.io.IOException;
 
 public class CommonConfigParser {
 
-    public int NumberOfPreferredNeighbors;
-    public int UnchokingInterval;
-    public int OptimisticUnchokingInterval;
-    public String Filename;
-    public int filesize;
-    public int piecesize;
+    public static int NumberOfPreferredNeighbors;
+    public static int UnchokingInterval;
+    public static int OptimisticUnchokingInterval;
+    public static String Filename;
+    public static int filesize;
+    public static int pieceSize;
 
     public void saveCommonConfig() {
 
@@ -22,40 +22,24 @@ public class CommonConfigParser {
             String nextline = null;
             try {
                 while ((nextline = commoncfgreader.readLine()) != null) {
-
                     String[] commonConfigTokens = nextline.split("\\s+");
-
-                    if (nextline.contains("NumberOfPreferredNeighbors")) {
-
+                    if (nextline.contains("NumberOfPreferredNeighbors")){
                         NumberOfPreferredNeighbors = Integer.parseInt(commonConfigTokens[1]);
-
                     }
-
                     if (nextline.contains("UnchokingInterval")) {
-
                         UnchokingInterval = Integer.parseInt(commonConfigTokens[1]);
-
                     }
                     if (nextline.contains("OptimisticUnchokingInterval")) {
-
                         OptimisticUnchokingInterval = Integer.parseInt(commonConfigTokens[1]);
-
-
                     }
                     if (nextline.contains("FileName")) {
-
                         Filename = commonConfigTokens[1];
-
                     }
                     if (nextline.contains("FileSize")) {
-
                         filesize = Integer.parseInt(commonConfigTokens[1]);
-
                     }
                     if (nextline.contains("PieceSize")) {
-
-                        piecesize = Integer.parseInt(commonConfigTokens[1]);
-
+                        pieceSize = Integer.parseInt(commonConfigTokens[1]);
                     }
 
 
@@ -72,4 +56,52 @@ public class CommonConfigParser {
         }
 
     }
+
+	public int getNumberOfPreferredNeighbors() {
+		return NumberOfPreferredNeighbors;
+	}
+
+	public void setNumberOfPreferredNeighbors(int numberOfPreferredNeighbors) {
+		NumberOfPreferredNeighbors = numberOfPreferredNeighbors;
+	}
+
+	public int getUnchokingInterval() {
+		return UnchokingInterval;
+	}
+
+	public void setUnchokingInterval(int unchokingInterval) {
+		UnchokingInterval = unchokingInterval;
+	}
+
+	public int getOptimisticUnchokingInterval() {
+		return OptimisticUnchokingInterval;
+	}
+
+	public void setOptimisticUnchokingInterval(int optimisticUnchokingInterval) {
+		OptimisticUnchokingInterval = optimisticUnchokingInterval;
+	}
+
+	public String getFilename() {
+		return Filename;
+	}
+
+	public void setFilename(String filename) {
+		Filename = filename;
+	}
+
+	public int getFilesize() {
+		return filesize;
+	}
+
+	public void setFilesize(int filesize) {
+		this.filesize = filesize;
+	}
+
+	public int getPiecesize() {
+		return pieceSize;
+	}
+
+	public void setPiecesize(int piecesize) {
+		this.pieceSize = piecesize;
+	}
 }
