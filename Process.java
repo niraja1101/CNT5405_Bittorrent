@@ -25,7 +25,7 @@ public class Process {
 	private void initiateCommunications() {
 		System.out.println("in process");
 		int portNumber=Integer.valueOf(remotePeers.get(handler.clientId).port_num);
-		handler.sc=new ServerConnector(portNumber,handler);
+		handler.sc=new ServerConnector(portNumber);
 		initClientConnections();
 		makeOutPutStreamForClients();
 		
@@ -43,7 +43,7 @@ public class Process {
 	           only_once=true;
 	        }
 	
-	     //   MessageHandler.messageHandling(handler);
+	        Message.messageHandling(handler);
 		}
 		
 	}
@@ -70,6 +70,7 @@ public class Process {
 		if (!adjacentPeer.has_sent_bitfield && adjacentPeer.isConnection && adjacentPeer.has_rcvd_handshake) {
 		    Message.sendBitfield(handler,adjacentPeer.peerId);
 		    adjacentPeer.has_sent_bitfield = true;
+		    System.out.println("bitfield message sent from host"+adjacentPeer.host_name+"on"+adjacentPeer.peerId);
 		}
 		
 	}
@@ -107,7 +108,7 @@ public class Process {
 		List<Integer> peerIdList=handler.peerIdList;
 		Map<Integer,Socket> socketMap=handler.socket;
 		 for (int i = 0; i < peerIdList.size(); i++) {
-	            if (i != handler.clientId && handler.remotePeers.get(0).isConnection) {
+	            if (i != handler.clientId && handler.remotePeers.get(i).isConnection) {
 	            	int peerId=peerIdList.get(i);
 	            	Socket socket=socketMap.get(peerId);
 	            	try {
@@ -129,11 +130,11 @@ public class Process {
 	
 	 public  void initClientConnections() {
 		 List<Integer> peerIdList=handler.peerIdList; 
-	       int remaining_connections = handler.peerIdList.size();
+	       int remaining_connections = handler.peerIdList.size()-1;
 	            while (remaining_connections > 0) {
 	                System.out.println();
 
-	                for (int i = 0; i < handler.peerIdList.size()-1; i++) {
+	                for (int i = 0; i < handler.peerIdList.size(); i++) {
 	                    if (i != handler.clientId  && !remotePeers.get(i).isConnection) {
 	                        System.out.println("Trying to establish connection to " + remotePeers.get(i).host_name + 
 	                        		" on port " + remotePeers.get(i).port_num);

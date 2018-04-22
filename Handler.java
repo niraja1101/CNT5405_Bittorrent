@@ -25,16 +25,19 @@ public class Handler {
 	public boolean every_peer_has_file;
 	public  List<Integer> peerIdList;
 	List<Boolean> hasFile;
+	List<Integer> receivedData;
 	public int clientId=-1;
 	public int peerId;
     Timer pref_neighbours_scheduler;
     Timer opt_neighbour_scheduler;
     List<Integer> pref_neighbours_clIDs;
+    Map<Integer, Integer> clientIdtoPeerId;
 	public Handler(int peerId,List<AdjacentPeers> remotePeers){
 		this.peerId=peerId;
 		this.remotePeers=remotePeers;
 		peerIdList=new ArrayList<>();
 		hasFile=new ArrayList<>();
+		receivedData=new ArrayList<>();
 		socket=new HashMap<>();
 		outputStream=new HashMap<>();
 		inputStream=new HashMap<>();
@@ -45,6 +48,7 @@ public class Handler {
 		random_num_gen=new Random();
 		pref_neighbours_clIDs=new ArrayList<>();
 		pref_neighbours_scheduler=new Timer();
+		clientIdtoPeerId=new HashMap<>();
 		opt_neighbour_scheduler=new Timer();
 		
 		}
@@ -55,9 +59,6 @@ public class Handler {
 			peerIdList.add(adjacentPeer.peerId);
 			hasFile.add(adjacentPeer.hasFile);
 		}
-	
-	
-	
 	
 	
 	

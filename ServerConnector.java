@@ -11,9 +11,8 @@ public class ServerConnector {
 		int num_of_clients = 0;
         ServerSocket socket_listener = null;
         Handler handler;
-	    public ServerConnector(int port_num,Handler handler) {
+	    public ServerConnector(int port_num) {
 	        this.port_num = port_num;
-	        this.handler=handler;
 	        messages_rcvd = Collections.synchronizedList(new ArrayList<Message>());
 	        new Thread() {
 	    	public void run() {
@@ -24,7 +23,7 @@ public class ServerConnector {
 	                        new Requesthandler(socket_listener.accept(),num_of_clients).start();
 	                        num_of_clients++;
 	                    } catch (SocketException io_exception) {
-	                        Thread.sleep(100);
+	                        Thread.sleep(50);
 	                    }
 	                    finally {
 	                        socket_listener.close();

@@ -2,6 +2,7 @@
 public class AdjacentPeers {
 
 	
+	public  boolean is_interested;
 	public AdjacentPeers(int id, String address, int port, boolean hasFile2) {
 		this.peerId=id;
 		this.port_num=port;

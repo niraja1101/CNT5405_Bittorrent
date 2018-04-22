@@ -1,8 +1,6 @@
-/*import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import Message.MESSAGE;
 
 public class MessageHandler {
     
@@ -16,20 +14,20 @@ public class MessageHandler {
 		    Iterator<Message> it = handler.sc.messages_rcvd.iterator();
 		    while (it.hasNext()) {
 		        Message msg_incom = it.next();
-		        Integer peerId = handler.peerIdList.get(msg_incom.clID);
-		        if(checkHandshake(msg_incom, msg_index))
+		        Integer peerId = handler.clientIdtoPeerId.get(msg_incom.clID);
+		        if(Message.checkHandshake(msg_incom, peerId))
 		        	continue;
 		        
-		       // msg_index = findIndex(pd, msg_incom, msg_index);
-		        if (peerId != null) {
-		            if (((int)msg_incom.msg_type != Message.bitfield) && 
-		            		pd.peer_neighbours[msg_index].has_rcvd_bit_field == false &&
-		            		pd.peer_neighbours[msg_index].has_rcvd_handshake == true) {
+		        
+		        		if (peerId != null) {
+		            if ((msg_incom.type != MESSAGE.BITFIELD) && 
+		            		handler.remotePeers.get(peerId).has_rcvd_bit_field == false &&
+		            				handler.remotePeers.get(peerId).has_rcvd_bit_field == true) {
 		                continue;
 		            }
 		        }
 		        
-		       	messageProcessing(handler, msg_incom, peerId);
+		       	Message.messageProcessing(handler, msg_incom, peerId);
 		        msg_to_remove.add(msg_incom);
 		    }
 
@@ -40,13 +38,9 @@ public class MessageHandler {
 	
     }
 	
-	private static void messageProcessing(Handler handler, Message msg_incom, int msg_index) {
-
-		 if(MESSAGE.BITFIELD==)
-	}
+	
     
     
     
     
 }
-*/
