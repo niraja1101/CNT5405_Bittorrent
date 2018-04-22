@@ -193,6 +193,8 @@ public class Message {
 		return (peerId == null && !(incomingMessage.type == MESSAGE.HANDSHAKE));
 	}
 
+
+
 	public static void messageHandling(Handler handler){
 		List<Message> msg_to_remove = new ArrayList<Message>();
 
@@ -218,22 +220,40 @@ public class Message {
 
 
 	private static void chokeMessage(Handler handler, Integer peerId) {
-		handler.remotePeers.get(peerId).is_choked = true;
+        int index = findIndex(handler, peerId);
+		handler.remotePeers.get(index).is_choked = true;
 		//	  pd.writelogs.chokedMsgType(pd.other_peer_Ids[pd.my_clID], pd.peer_neighbours[msg_index].peerId);
 	}
 
 	private static void unchokeMessage(Handler handler, Integer peerId) {
-		handler.remotePeers.get(peerId).is_choked = true;
+	    int index = findIndex(handler, peerId);
+		handler.remotePeers.get(index).is_choked = true;
 		//	  pd.writelogs.unchokedMsgType(pd.other_peer_Ids[pd.my_clID], pd.peer_neighbours[msg_index].peerId);
 	}
 
+	static public int findIndex(Handler handler, Integer peerId){
+
+	    int temp=-1;
+	    for(int i=0;i<handler.peerIdList.size();i++)
+        {
+            if(handler.peerIdList.get(i)==peerId){
+                temp=i;
+                break;
+            }
+        }
+        return temp;
+
+    }
+
 	private static void interestedNeighborMessage(Handler handler, Integer peerId) {
-		handler.remotePeers.get(peerId).is_interested = true;
+        int index = findIndex(handler, peerId);
+		handler.remotePeers.get(index).is_interested = true;
 		//	pd.writelogs.interestedMsgType(pd.other_peer_Ids[pd.my_clID], pd.peer_neighbours[msg_index].peerId);
 	}
 
 	private static void uninterestedMessage(Handler handler, Integer peerId) {
-		handler.remotePeers.get(peerId).is_interested = false;
+        int index = findIndex(handler, peerId);
+		handler.remotePeers.get(index).is_interested = false;
 		//	pd.writelogs.notInterestedMsgType(pd.other_peer_Ids[pd.my_clID], pd.peer_neighbours[msg_index].peerId);
 	}
 
