@@ -26,20 +26,20 @@ public class FileHandler {
 	}
 	
 	public  void calculatePieceSize(){
-		if (fileSize%pieceSize != 0){
-            number_of_bits=(int)(fileSize/pieceSize + 1);
-		}
-        else{
-            number_of_bits=(int)(fileSize/pieceSize);
-        }
-		
-        
-		if (number_of_bits%8 != 0){
-            number_of_bytes=(int)(number_of_bits/8 + 1);
+		if (Math.floorMod(fileSize,pieceSize) != 0){
+            number_of_bits=(Math.floorDiv(fileSize,pieceSize) + 1);
         }
         else{
-            number_of_bytes=(int)(number_of_bits/8);
+            number_of_bits=Math.floorDiv(fileSize,pieceSize);
         }
+
+        if ((Math.floorMod(number_of_bits,8)!= 0){
+            number_of_bytes=Math.floorDiv(number_of_bits,8) + 1;
+        }
+        else{
+            number_of_bytes=Math.floorDiv(number_of_bits,8);
+        }
+
 	}
 	
 	public void initBitField() { 
