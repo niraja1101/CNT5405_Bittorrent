@@ -41,9 +41,30 @@ public class Message {
 
 	public static  void messageProcessing(Handler handler, Message msg_incom, Integer peerId) {
 
-		if(msg_incom.type==MESSAGE.BITFIELD){
-
+		if(msg_incom.type==MESSAGE.CHOKE){
+            chokeMessage(handler, peerId);
 		}
+		else if(msg_incom.type == MESSAGE.UNCHOKE){
+            unchokeMessage(handler, peerId);
+        }
+        else if(msg_incom.type == MESSAGE.INTERESTED){
+            interestedNeighborMessage(handler, peerId);
+        }
+        else if(msg_incom.type == MESSAGE.NOT_INTERESTED){
+            uninterestedMessage(handler, peerId);
+        }
+        else if(msg_incom.type == MESSAGE.HAVE){
+            haveMessageHandler(handler, msg_incom, peerId);
+        }
+        else if(msg_incom.type == MESSAGE.REQUEST){
+            bitFieldHandler(handler, msg_incom, peerId);
+        }
+        else if(msg_incom.type == MESSAGE.REQUEST){
+            requestMessage(handler, msg_incom, peerId);
+        }
+        else if(msg_incom.type == MESSAGE.PIECE){
+            pieceMessageHandler(handler, msg_incom, peerId);
+        }
 		else if(msg_incom.type==MESSAGE.HANDSHAKE){
 			handShakeHandler(handler, msg_incom, peerId);
 		}
@@ -160,6 +181,16 @@ public class Message {
 		sendMessage(handler,handShakeArray,peerId);
 	}
 
+    private static void bitFieldHandler(Handler handler, Message incomingMessage, int peerId) {
+        handler.remotePeers.get(peerId).bit_field_map = incomingMessage.payload;
+        handler.remotePeers.get(peerId).has_rcvd_bit_field = true;
+        if (checkNeededPieces(handler.remotePeers.get(peerId),handler)) {
+            Message.sendInterested(peerId,handler);
+        } else {
+            Message.sendNotInterested(handler, peerId);
+        }
+    }
+
 	public static void sendNotInterested(Handler handler, int index ) {
 		sendMessage(handler,getMessage(MESSAGE.NOT_INTERESTED), handler.peerIdList.get(index));
 	}
@@ -173,6 +204,84 @@ public class Message {
 
         sendMessage(handler,getMessage(MESSAGE.INTERESTED), handler.peerIdList.get(index));
 	}
+
+    private static void pieceMessageHandler(Handler handler, Message incomingMessage, int msg_index) {
+        handler.fh.file_pieces[handler.remotePeers.get(msg_index).piece_num] = incomingMessage.payload;
+
+        handler.remotePeers.get(msg_index).is_waiting_for_piece = false;
+
+        BigInteger tempField = new BigInteger(handler.fh.bitfield);
+
+        tempField = tempField.setBit(handler.remotePeers.get(msg_index).piece_num);
+
+        handler.fh.bitfield = tempField.toByteArray();
+
+        //handler.recieved_data[msg_index] += handler.size_of_piece;
+        //handler.writelogs.pieceDownloaded(handler.other_peer_Ids[handler.my_clID], handler.peer_neighbours[msg_index].peerId, handler.peer_neighbours[msg_index].piece_num, ++handler.tot_pieces);
+
+        boolean haveFile = true;
+        for (int i = 0; i < handler.number_of_bits; i++) {
+            if (!tempField.testBit(i)) {
+                haveFile = false;
+                break;
+            }
+        }
+
+        handler.hasFile.set((handler.clientId),haveFile);
+
+        if (haveFile){
+            //handler.writelogs.fileDownloaded(handler.my_peer_Id);
+        }
+        int i2 = 0;
+        for(int peerId:handler.peerIdList){
+            if( i2 == handler.clientId)
+                continue;
+            Message.sendHave(i2, handler.remotePeers.get(msg_index).piece_num, handler);
+            i2++;
+        }
+
+        handler.remotePeers.get(msg_index).piece_num = -1;
+
+
+
+        int j = 0;
+        for(AdjacentPeers peerId:handler.remotePeers){
+            if (j == handler.clientId)
+                continue;
+
+            boolean interested = false;
+
+            if (handler.remotePeers.get(j).bit_field_map != null)
+                interested = checkNeededPieces(handler.remotePeers.get(j), handler);
+
+            if (!interested)
+                Message.sendNotInterested(handler, j);
+            j++;
+        }
+
+        int j2=0;
+        boolean all_have_file = true;
+        for(int peerId:handler.peerIdList){
+            if(!handler.hasFile.get(j2)){
+                all_have_file = false;
+            }
+            j2++;
+        }
+
+        handler.every_peer_has_file = all_have_file;
+    }
+
+    public static boolean checkNeededPieces(AdjacentPeers neighbor,Handler handler) {
+        BigInteger self_field = new BigInteger(handler.fh.bitfield);
+        BigInteger neighbour_field = new BigInteger(neighbor.bit_field_map);
+
+        if (neighbour_field.and(self_field.and(neighbour_field).not()).doubleValue() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+
 
 
 	public static void handShakeHandler(Handler handler, Message incomingMessage, Integer msg_index) {
