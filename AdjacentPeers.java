@@ -9,6 +9,8 @@ public class AdjacentPeers {
 		this.host_name=address;
 		this.hasFile=hasFile2;
 	}
+	
+
 	public int peerId;
 	public String host_name = "";
 	public int port_num;
